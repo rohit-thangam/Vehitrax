@@ -32,10 +32,16 @@ The project is built on a modern, decoupled client-server architecture.
 
 ## 3. Core System Architecture & Workflow
 
-### 3.1 Data Acquisition (Input)
+### 3.1 Custom Dataset Collection & Annotation
+A significant portion of the Machine Learning effort was dedicated to creating a localized dataset for high accuracy:
+1. **Data Gathering:** Images and video frames of Indian vehicles containing various license plate formats (standardized and non-standardized) were manually gathered.
+2. **Annotation:** The dataset was manually annotated using **MakeSense.ai**. Bounding boxes were meticulously drawn around license plates to create accurate ground-truth labels for training.
+3. **Training:** The YOLOv8 model was custom-trained on this specific, hand-curated dataset to ensure maximum detection reliability for Indian registration plates under various lighting conditions.
+
+### 3.2 Data Acquisition (Input)
 The system ingests video data. This can be mocked via an uploaded `.mp4` file or theoretically connected to an RTSP IP camera stream. The `main.py` script routes these requests to the appropriate processing pipeline.
 
-### 3.2 The ML Pipeline (Inference)
+### 3.3 The ML Pipeline (Inference)
 The core logic resides in the backend's continuous streaming mechanism:
 1. **Frame Capture:** OpenCV reads frames from the video source.
 2. **Detection:** The YOLOv8 model (`best.pt`) evaluates the frame to calculate bounding boxes around vehicles and, specifically, license plates.
