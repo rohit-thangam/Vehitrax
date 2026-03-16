@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+ultralytics
+easyocr
+python-multipart
+opencv-python-headless
+sqlalchemy
+pydantic
+sse-starlette
