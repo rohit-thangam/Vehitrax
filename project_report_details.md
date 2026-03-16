@@ -87,6 +87,9 @@ Instead of making the frontend ask "Are there new plates?", the backend uses Ser
    - Dark/Light theme toggles.
    - "Deployment Mode" configurations to adapt the UI for different environments (e.g., turning on/off toll collection features vs. residential features).
 
+6. **Parking Space Management (Under Development):**
+   - The platform is expanding to include a real-time slot allocation module. Once completed, the ANPR system will automatically allocate or track individual parking space availability, directing drivers to open spots upon successful plate recognition.
+
 ---
 
 ## 5. System Deployment & Use Cases
