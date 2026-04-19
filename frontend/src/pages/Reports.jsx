@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
     BarChart, Bar, PieChart, Pie, Cell, Legend
@@ -6,6 +6,7 @@ import {
 import { FileText, TrendingUp, Users, Activity, Download, Calendar, Loader2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import { motion } from 'framer-motion';
 
 const Reports = () => {
     const reportRef = useRef(null);
@@ -37,16 +38,28 @@ const Reports = () => {
         }
     };
 
-    // Analytics Mock Data
-    const weeklyVolume = [
-        { name: 'Mon', total: 1200, visitors: 300, residents: 900 },
-        { name: 'Tue', total: 1350, visitors: 350, residents: 1000 },
-        { name: 'Wed', total: 1100, visitors: 200, residents: 900 },
-        { name: 'Thu', total: 1400, visitors: 400, residents: 1000 },
-        { name: 'Fri', total: 1800, visitors: 600, residents: 1200 },
-        { name: 'Sat', total: 2100, visitors: 1100, residents: 1000 },
-        { name: 'Sun', total: 1900, visitors: 900, residents: 1000 },
-    ];
+    const [stats, setStats] = useState({
+        kpi: { total_logs: 0, visitor_ratio: 0 },
+        vehicleTypes: [],
+        weeklyVolume: []
+    });
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const res = await fetch('http://localhost:8000/api/logs/stats/realtime');
+                if (res.ok) {
+                    setStats(await res.json());
+                }
+            } catch (e) {
+                console.error("Failed to fetch stats", e);
+            }
+        };
+
+        fetchStats();
+        const interval = setInterval(fetchStats, 2000); // 2 second polling for rapid real-time feel
+        return () => clearInterval(interval);
+    }, []);
 
     const hourlyTraffic = [
         { time: '06:00', vehicles: 45 },
@@ -58,13 +71,6 @@ const Reports = () => {
         { time: '18:00', vehicles: 520 },
         { time: '20:00', vehicles: 280 },
         { time: '22:00', vehicles: 90 },
-    ];
-
-    const vehicleTypes = [
-        { name: 'Private Cars', value: 65, color: '#8b5cf6' }, // Violet
-        { name: 'Two Wheelers', value: 20, color: '#0ea5e9' }, // Sky
-        { name: 'Commercial', value: 10, color: '#f59e0b' },   // Amber
-        { name: 'Emergency', value: 5, color: '#f43f5e' },     // Rose
     ];
 
     // Custom Tooltip for Charts
@@ -132,10 +138,14 @@ const Reports = () => {
                         <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 border border-indigo-500/20 group-hover:scale-110 transition-transform">
                             <Activity className="w-6 h-6" />
                         </div>
-                        <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">10,850</h3>
+                        <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} key={stats.kpi.total_logs}>
+                                {stats.kpi.total_logs.toLocaleString()}
+                            </motion.span>
+                        </h3>
                         <p className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">Total Weekly Logins</p>
                         <div className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full">
-                            <TrendingUp className="w-3.5 h-3.5" /> +12% from last week
+                            <TrendingUp className="w-3.5 h-3.5" /> Live Sync Active
                         </div>
                     </div>
 
@@ -144,7 +154,11 @@ const Reports = () => {
                         <div className="w-12 h-12 rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center mx-auto mb-4 border border-violet-500/20 group-hover:scale-110 transition-transform">
                             <Users className="w-6 h-6" />
                         </div>
-                        <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">42%</h3>
+                        <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} key={stats.kpi.visitor_ratio}>
+                                {stats.kpi.visitor_ratio}%
+                            </motion.span>
+                        </h3>
                         <p className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider">Visitor Ratio</p>
                         <div className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-rose-500 bg-rose-500/10 px-2.5 py-1 rounded-full">
                             <TrendingUp className="w-3.5 h-3.5" /> +5% weekend spike
@@ -173,7 +187,7 @@ const Reports = () => {
                         </h3>
                         <div className="h-80">
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={weeklyVolume} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <AreaChart data={stats.weeklyVolume} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
@@ -197,7 +211,7 @@ const Reports = () => {
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
-                                        data={vehicleTypes}
+                                        data={stats.vehicleTypes}
                                         cx="50%"
                                         cy="50%"
                                         innerRadius={70}
@@ -206,7 +220,7 @@ const Reports = () => {
                                         dataKey="value"
                                         stroke="none"
                                     >
-                                        {vehicleTypes.map((entry, index) => (
+                                        {stats.vehicleTypes.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                         ))}
                                     </Pie>

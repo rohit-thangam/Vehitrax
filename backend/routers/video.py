@@ -42,10 +42,10 @@ async def start_live_feed(background_tasks: BackgroundTasks):
     """
     video_id = "live_demo_01"
     # The backend is in 'S8/backend', so the data folder is 'S8/data'
-    file_path = os.path.join("..", "data", "demo.mp4")
+    file_path = os.path.join("..", "data", "toll_entry.mp4")
     
     if not os.path.exists(file_path):
-        return {"error": "Demo video not found in data folder"}
+        return {"error": "toll_entry.mp4 not found in data folder"}
         
     # Start background processing
     background_tasks.add_task(process_video_background, video_id, file_path)
@@ -53,5 +53,5 @@ async def start_live_feed(background_tasks: BackgroundTasks):
     return {
         "message": "Live feed started", 
         "video_id": video_id, 
-        "url": "http://localhost:8000/data/demo.mp4"
+        "url": "http://localhost:8000/data/toll_entry.mp4"
     }

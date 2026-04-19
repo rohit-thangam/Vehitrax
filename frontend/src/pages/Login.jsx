@@ -4,6 +4,7 @@ import { Shield, ArrowRight, AlertCircle, Moon, Sun, ArrowLeft } from 'lucide-re
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../utils/auth';
 import { useTheme } from '../context/ThemeContext';
+import logoIcon from '../assets/images/colour-icon.png';
 
 const FloatingParticles = () => {
     // Generate 30 random particles
@@ -109,8 +110,8 @@ const Login = () => {
                 className="w-full max-w-md bg-white/60 dark:bg-[#1a1a2e]/60 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/50 dark:border-white/10 p-10 relative z-10"
             >
                 <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white mb-6 shadow-[0_0_20px_rgba(124,58,237,0.4)]">
-                        <Shield className="w-8 h-8" />
+                    <div className="flex mx-auto items-center justify-center w-24 h-24 mb-4">
+                        <img src={logoIcon} alt="Vehitrax" className="w-full h-full object-contain drop-shadow-2xl" />
                     </div>
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Access Vehitrax</h1>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-3 font-medium">
@@ -150,7 +151,7 @@ const Login = () => {
 
                     <div className="flex items-center justify-between text-sm px-1">
                         <label className="flex items-center gap-2 cursor-pointer group">
-                            <input type="checkbox" className="rounded border-slate-300 dark:border-slate-700 text-primary focus:ring-primary bg-transparent" />
+                            <input type="checkbox" className="w-4 h-4 cursor-pointer accent-violet-600 transition-all" />
                             <span className="text-slate-600 dark:text-slate-400 font-medium group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">Remember me</span>
                         </label>
                         <a href="#" className="font-bold text-primary hover:text-primary-light transition-colors">Recover Access?</a>

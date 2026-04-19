@@ -12,9 +12,12 @@ import {
     Settings,
     LogOut,
     X,
-    Shield
+    Shield,
+    History,
+    ParkingSquare
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import logoIcon from '../assets/images/colour-icon.png';
 
 import { getCurrentUser, ROLES, logoutUser } from '../utils/auth';
 
@@ -29,11 +32,11 @@ const Sidebar = ({ isOpen, onClose }) => {
         { name: 'Detection Logs', icon: FileText, path: '/dashboard/logs' },
         { name: 'Registered Vehicles', icon: Database, path: '/dashboard/database' },
         { name: 'Alerts', icon: AlertTriangle, path: '/dashboard/alerts' },
-        { name: 'Parking Management', icon: ParkingCircle, path: '/dashboard/parking' },
+        { name: 'Live Occupancy', icon: ParkingSquare, path: '/dashboard/parking' },
         { name: 'Reports', icon: BarChart3, path: '/dashboard/reports' },
     ].filter(item => {
         if (!isSecurity) return true;
-        return ['Dashboard', 'Live Monitoring', 'Alerts'].includes(item.name);
+        return ['Dashboard', 'Live Monitoring', 'Detection Logs', 'Alerts'].includes(item.name);
     });
 
     return (
@@ -47,8 +50,8 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="h-20 px-6 border-b border-slate-200/50 dark:border-slate-800/50 flex justify-between items-center relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="flex items-center gap-3 relative z-10">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-violet-500/20">
-                        <Shield className="w-4 h-4" />
+                    <div className="w-10 h-10 flex items-center justify-center relative overflow-hidden flex-shrink-0">
+                        <img src={logoIcon} alt="Vehitrax" className="w-full h-full object-contain drop-shadow-md" />
                     </div>
                     <span className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 tracking-tight">
                         Vehitrax

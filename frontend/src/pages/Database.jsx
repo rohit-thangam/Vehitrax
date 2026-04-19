@@ -15,7 +15,8 @@ const Database = () => {
         phone: '',
         email: '',
         vehiclePlate: '',
-        vehicleType: 'Car'
+        vehicleType: 'Car',
+        status: 'Registered'
     });
 
     useEffect(() => {
@@ -34,6 +35,7 @@ const Database = () => {
                     flat: v.flat,
                     phone: v.phone,
                     email: v.email,
+                    status: v.status || 'Registered',
                     vehicles: [{ plate: v.vehiclePlate, type: v.vehicleType }]
                 }));
                 setResidents(formatted);
@@ -52,7 +54,8 @@ const Database = () => {
             phone: newResident.phone,
             email: newResident.email,
             vehiclePlate: newResident.vehiclePlate,
-            vehicleType: newResident.vehicleType
+            vehicleType: newResident.vehicleType,
+            status: newResident.status
         };
 
         try {
@@ -85,7 +88,7 @@ const Database = () => {
 
         setIsAddModalOpen(false);
         setEditingResidentId(null);
-        setNewResident({ name: '', flat: '', phone: '', email: '', vehiclePlate: '', vehicleType: 'Car' });
+        setNewResident({ name: '', flat: '', phone: '', email: '', vehiclePlate: '', vehicleType: 'Car', status: 'Registered' });
     };
 
     const handleEditClick = (resident) => {
@@ -95,7 +98,8 @@ const Database = () => {
             phone: resident.phone,
             email: resident.email,
             vehiclePlate: resident.vehicles[0]?.plate || '',
-            vehicleType: resident.vehicles[0]?.type || 'Car'
+            vehicleType: resident.vehicles[0]?.type || 'Car',
+            status: resident.status || 'Registered'
         });
         setEditingResidentId(resident.id);
         setIsAddModalOpen(true);
@@ -132,7 +136,7 @@ const Database = () => {
                 <button
                     onClick={() => {
                         setEditingResidentId(null);
-                        setNewResident({ name: '', flat: '', phone: '', email: '', vehiclePlate: '', vehicleType: 'Car' });
+                        setNewResident({ name: '', flat: '', phone: '', email: '', vehiclePlate: '', vehicleType: 'Car', status: 'Registered' });
                         setIsAddModalOpen(true);
                     }}
                     className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-bold py-2.5 px-5 rounded-xl transition-all shadow-md shadow-violet-500/20 hover:shadow-violet-500/40 transform hover:-translate-y-0.5"
@@ -199,9 +203,16 @@ const Database = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{resident.name}</h3>
-                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 mt-1 uppercase tracking-wider border border-slate-200 dark:border-slate-700">
-                                        Flat: {resident.flat}
-                                    </span>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">
+                                            Flat: {resident.flat}
+                                        </span>
+                                        {resident.status === 'Blacklisted' && (
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 uppercase tracking-wider border border-rose-500/20">
+                                                Blacklisted
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -374,6 +385,20 @@ const Database = () => {
                                                 <option value="Car">Car / SUV</option>
                                                 <option value="Bike">Motorcycle / Bike</option>
                                                 <option value="Truck">Commercial / Truck</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-1.5 md:col-span-2">
+                                            <label className="text-xs font-bold text-slate-500 dark:text-slate-400">Access Authorization</label>
+                                            <select
+                                                className={`w-full text-sm rounded-xl px-4 py-3 outline-none border focus:ring-1 transition-all font-bold ${
+                                                    newResident.status === 'Blacklisted' 
+                                                    ? 'bg-rose-50 border-rose-200 text-rose-700 focus:border-rose-500 focus:ring-rose-500 dark:bg-rose-500/10 dark:border-rose-500/30 dark:text-rose-400'
+                                                    : 'bg-emerald-50 border-emerald-200 text-emerald-700 focus:border-emerald-500 focus:ring-emerald-500 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-400'
+                                                }`}
+                                                value={newResident.status} onChange={e => setNewResident({ ...newResident, status: e.target.value })}
+                                            >
+                                                <option value="Registered">Authorized (Registered)</option>
+                                                <option value="Blacklisted">Denied (Blacklisted)</option>
                                             </select>
                                         </div>
                                     </div>

@@ -11,22 +11,24 @@ import {
     ShieldAlert
 } from 'lucide-react';
 
+const DEFAULT_DETECTION = {
+    plate: "AWAITING...",
+    confidence: 0,
+    type: "---",
+    entryTime: "---",
+    status: "Unknown",
+    location: "---",
+    image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop"
+};
+
 const LiveMonitor = () => {
     const navigate = useNavigate();
     const [videoUrl, setVideoUrl] = useState(null);
     const [selectedCamera, setSelectedCamera] = useState('CAM-01');
     const simulationIntervalRef = React.useRef(null);
 
-    // Simulated Detection Data
-    const [lastDetection, setLastDetection] = useState({
-        plate: "AP39WD8488",
-        confidence: 96,
-        type: "Car",
-        entryTime: new Date().toLocaleTimeString(),
-        status: "Registered", // Registered, Visitor, Blacklisted
-        location: "Gate 1 - Entry",
-        image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop"
-    });
+    // Initial Empty State
+    const [lastDetection, setLastDetection] = useState(DEFAULT_DETECTION);
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [currentVideoId, setCurrentVideoId] = useState(null);
@@ -243,34 +245,10 @@ const LiveMonitor = () => {
                             <div>
                                 <p className={`${styles.color} font-black text-lg tracking-tight uppercase`}>{lastDetection.status}</p>
                                 <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mt-0.5">
-                                    {lastDetection.status === 'Unknown' ? 'Verification Required' : 'Access Confirmed'}
+                                    {lastDetection.status === 'Blacklisted' ? 'Access Denied' : lastDetection.status === 'Unknown' ? 'Verification Required' : 'Access Confirmed'}
                                 </p>
                             </div>
                         </div>
-
-                        {lastDetection.status === 'Unknown' && (
-                            <button
-                                onClick={async () => {
-                                    if (!lastDetection.id) return;
-                                    try {
-                                        const res = await fetch(`http://localhost:8000/api/logs/${lastDetection.id}/status`, {
-                                            method: 'PATCH',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ status: "Visitor" })
-                                        });
-                                        if (res.ok) {
-                                            setLastDetection({ ...lastDetection, status: "Visitor" });
-                                        }
-                                    } catch (e) {
-                                        console.error("Failed to update status", e);
-                                    }
-                                }}
-                                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm shadow-emerald-500/20"
-                            >
-                                <CheckCircle className="w-5 h-5" />
-                                Approve as Visitor
-                            </button>
-                        )}
                     </div>
 
                     {/* Details List */}
@@ -293,7 +271,10 @@ const LiveMonitor = () => {
 
                 {/* Action Buttons */}
                 <div className="p-5 border-t border-slate-200 dark:border-slate-800/50 grid grid-cols-2 gap-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-b-2xl">
-                    <button className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-bold py-2.5 rounded-xl transition-all shadow-sm">
+                    <button 
+                        onClick={() => setLastDetection(DEFAULT_DETECTION)}
+                        className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-bold py-2.5 rounded-xl transition-all shadow-sm"
+                    >
                         Dismiss
                     </button>
 
@@ -305,7 +286,24 @@ const LiveMonitor = () => {
                             View Owner Details
                         </button>
                     ) : (
-                        <button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-sm font-bold py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 transform hover:-translate-y-0.5 flex flex-col items-center justify-center leading-tight">
+                        <button 
+                            onClick={async () => {
+                                if (!lastDetection.id) return;
+                                try {
+                                    const res = await fetch(`http://localhost:8000/api/logs/${lastDetection.id}/status`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ status: "Visitor" })
+                                    });
+                                    if (res.ok) {
+                                        setLastDetection({ ...lastDetection, status: "Visitor" });
+                                    }
+                                } catch (e) {
+                                    console.error("Failed to update status", e);
+                                }
+                            }}
+                            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-sm font-bold py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 transform hover:-translate-y-0.5 flex flex-col items-center justify-center leading-tight"
+                        >
                             <span>Take Action</span>
                             <span className="text-[10px] opacity-90 font-medium">Log as Visitor</span>
                         </button>

@@ -2,17 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Filter, Download, ArrowUpDown, Play, Pause, Calendar, X, Camera, MapPin, Clock, ShieldAlert, CheckCircle, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentUser } from '../utils/auth';
 
 const Logs = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('All');
     const [selectedLog, setSelectedLog] = useState(null);
-    const [isLiveMode, setIsLiveMode] = useState(false);
     const [logsData, setLogsData] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const simulationRef = useRef(null);
+    const user = getCurrentUser();
 
     // Fetch data from backend
     const fetchLogs = async () => {
@@ -42,18 +42,6 @@ const Logs = () => {
         // Fetch initially
         fetchLogs();
     }, []);
-
-    // Polling mechanism for Live Mode
-    useEffect(() => {
-        if (isLiveMode) {
-            simulationRef.current = setInterval(() => {
-                fetchLogs();
-            }, 3000); // Poll API every 3 seconds
-        } else {
-            clearInterval(simulationRef.current);
-        }
-        return () => clearInterval(simulationRef.current);
-    }, [isLiveMode]);
 
     // CSV Export Logic
     const handleExportCSV = () => {
@@ -141,6 +129,7 @@ const Logs = () => {
                             <option value="All">All Statuses</option>
                             <option value="Registered">Registered</option>
                             <option value="Visitor">Visitor</option>
+                            <option value="Unknown">Unknown</option>
                             <option value="Blacklisted">Blacklisted</option>
                         </select>
                         <Filter className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -174,18 +163,6 @@ const Logs = () => {
                     >
                         <Download className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
                         Export
-                    </button>
-
-                    {/* Live Feed Toggle */}
-                    <button
-                        onClick={() => setIsLiveMode(!isLiveMode)}
-                        className={`flex items-center gap-2 text-sm font-bold py-2.5 px-4 rounded-xl transition-all shadow-sm group w-full sm:w-auto justify-center border ${isLiveMode ? 'bg-rose-500/10 text-rose-600 border-rose-500/30' : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'}`}
-                    >
-                        {isLiveMode ? (
-                            <><Pause className="w-4 h-4" /> Stop Live stream</>
-                        ) : (
-                            <><Play className="w-4 h-4" /> Go Live</>
-                        )}
                     </button>
 
                 </div>
@@ -227,13 +204,32 @@ const Logs = () => {
                                             {log.status}
                                         </span>
                                     </td>
-                                    <td className="py-4 px-6 text-right">
+                                    <td className="py-4 px-6 text-right whitespace-nowrap">
                                         <button
                                             onClick={() => setSelectedLog(log)}
                                             className="text-primary hover:text-primary-dark dark:hover:text-primary-light text-sm font-bold transition-colors"
                                         >
                                             Details
                                         </button>
+                                        {user?.role === 'admin' && (
+                                            <button
+                                                onClick={async () => {
+                                                    if(window.confirm(`Are you sure you want to delete log for ${log.plate}?`)) {
+                                                        try {
+                                                            const res = await fetch(`http://localhost:8000/api/logs/${log.id}`, { method: 'DELETE' });
+                                                            if(res.ok) {
+                                                                fetchLogs();
+                                                            }
+                                                        } catch (e) {
+                                                            console.error("Failed to delete log", e);
+                                                        }
+                                                    }
+                                                }}
+                                                className="text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-sm font-bold transition-colors ml-4"
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

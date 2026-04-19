@@ -6,9 +6,13 @@ export const ROLES = {
 export const loginUser = (username, password) => {
     if (username === 'admin' && password === 'admin') {
         const user = {
-            name: 'Admin User',
+            id: 'ADM-001',
+            username: 'admin',
+            name: 'Rohit Admin',
             role: ROLES.ADMIN,
-            designation: 'System Administrator'
+            designation: 'System Administrator',
+            email: 'admin@vehitrax.com',
+            department: 'IT & Management'
         };
         localStorage.setItem('currentUser', JSON.stringify(user));
         return { success: true, user };
@@ -16,9 +20,13 @@ export const loginUser = (username, password) => {
 
     if (username === 'security' && password === 'security') {
         const user = {
-            name: 'Security Guard',
+            id: 'SEC-8472',
+            username: 'security',
+            name: 'Ramesh Singh',
             role: ROLES.SECURITY,
-            designation: 'Gate Security'
+            designation: 'Gate Security',
+            email: 'gate1@vehitrax.com',
+            department: 'Operations'
         };
         localStorage.setItem('currentUser', JSON.stringify(user));
         return { success: true, user };

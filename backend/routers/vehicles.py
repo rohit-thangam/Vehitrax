@@ -12,6 +12,7 @@ class VehicleCreate(BaseModel):
     email: str
     vehiclePlate: str
     vehicleType: str
+    status: str = "Registered"
 
 class VehicleResponse(VehicleCreate):
     id: int
@@ -28,9 +29,10 @@ def get_vehicles():
                 "name": v.owner_name,
                 "flat": v.apartment,
                 "phone": v.phone,
-                "email": v.owner_name.lower().replace(" ", "") + "@example.com", # Mocking email since missing in db model
+                "email": v.owner_name.lower().replace(" ", "") + "@example.com",
                 "vehiclePlate": v.plate,
-                "vehicleType": "Car" # Defaulting type since not in db model
+                "vehicleType": getattr(v, "vehicle_type", "Car"), 
+                "status": getattr(v, "status", "Registered")
             })
         return result
     finally:
@@ -50,7 +52,9 @@ def create_vehicle(vehicle: VehicleCreate):
             owner_name=vehicle.name,
             apartment=vehicle.flat,
             phone=vehicle.phone,
-            plate=clean_plate
+            plate=clean_plate,
+            status=vehicle.status,
+            vehicle_type=vehicle.vehicleType
         )
         db.add(new_vehicle)
         db.commit()
@@ -63,7 +67,8 @@ def create_vehicle(vehicle: VehicleCreate):
             "phone": vehicle.phone,
             "email": vehicle.email,
             "vehiclePlate": vehicle.vehiclePlate,
-            "vehicleType": vehicle.vehicleType
+            "vehicleType": vehicle.vehicleType,
+            "status": new_vehicle.status
         }
     finally:
         db.close()
@@ -82,6 +87,8 @@ def update_vehicle(vehicle_id: int, vehicle: VehicleCreate):
         db_vehicle.apartment = vehicle.flat
         db_vehicle.phone = vehicle.phone
         db_vehicle.plate = clean_plate
+        db_vehicle.status = vehicle.status
+        db_vehicle.vehicle_type = vehicle.vehicleType
         
         db.commit()
         
@@ -92,7 +99,8 @@ def update_vehicle(vehicle_id: int, vehicle: VehicleCreate):
             "phone": vehicle.phone,
             "email": vehicle.email,
             "vehiclePlate": vehicle.vehiclePlate,
-            "vehicleType": vehicle.vehicleType
+            "vehicleType": vehicle.vehicleType,
+            "status": db_vehicle.status
         }
     finally:
         db.close()

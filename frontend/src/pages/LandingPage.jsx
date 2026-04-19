@@ -6,6 +6,7 @@ import {
     Building2, Store, Car, MapPin, X, Mail, MapPinned
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import logoIcon from '../assets/images/colour-icon.png';
 
 const FloatingParticles = () => {
     // Generate 30 random particles
@@ -85,8 +86,8 @@ const LandingPage = () => {
             <nav className="fixed w-full z-40 bg-white/40 dark:bg-[#0f0c29]/50 backdrop-blur-xl border-b border-white/20 dark:border-white/10 transition-colors duration-500">
                 <div className="container mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-violet-500/30">
-                            <Shield className="w-5 h-5" />
+                        <div className="w-12 h-12 flex items-center justify-center relative flex-shrink-0">
+                            <img src={logoIcon} alt="Vehitrax" className="w-full h-full object-contain drop-shadow-lg" />
                         </div>
                         <span className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 tracking-tight">Vehitrax</span>
                     </div>
@@ -354,8 +355,8 @@ const LandingPage = () => {
             <footer className="py-12 relative z-10 border-t border-black/5 dark:border-white/5 bg-white/20 dark:bg-slate-950/20 backdrop-blur-md text-center">
                 <div className="container mx-auto px-6">
                     <div className="flex items-center justify-center gap-3 mb-6 opacity-80">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-white flex items-center justify-center">
-                            <Shield className="w-4 h-4" />
+                        <div className="w-10 h-10 flex items-center justify-center relative flex-shrink-0">
+                            <img src={logoIcon} alt="Vehitrax" className="w-full h-full object-contain drop-shadow-md" />
                         </div>
                         <span className="font-black text-slate-900 dark:text-white tracking-widest uppercase">Vehitrax</span>
                     </div>

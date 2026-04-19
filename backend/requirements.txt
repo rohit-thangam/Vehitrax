@@ -7,3 +7,6 @@ opencv-python-headless
 sqlalchemy
 pydantic
 sse-starlette
+numpy
+httpx
+python-dotenv

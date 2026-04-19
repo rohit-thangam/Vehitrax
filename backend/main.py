@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import video, stream, logs, vehicles
+from routers import video, stream, logs, vehicles, parking
 import os
 
 app = FastAPI(title="Vehitrax Backend API")
@@ -23,6 +23,7 @@ app.include_router(video.router, prefix="/api/video", tags=["Video"])
 app.include_router(stream.router, prefix="/api/stream", tags=["Stream"])
 app.include_router(logs.router, prefix="/api/logs", tags=["Logs"])
 app.include_router(vehicles.router, prefix="/api/vehicles", tags=["Vehicles"])
+app.include_router(parking.router, prefix="/api/parking", tags=["Parking"])
 
 @app.get("/")
 async def root():

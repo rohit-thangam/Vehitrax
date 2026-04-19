@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import DashboardLayout from './layouts/DashboardLayout';
 import DashboardHome from './pages/DashboardHome';
+import { getCurrentUser } from './utils/auth';
 
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -15,6 +16,14 @@ import Settings from './pages/Settings';
 import LiveMonitor from './pages/LiveMonitor';
 import Reports from './pages/Reports';
 
+const ProtectedRoute = ({ children }) => {
+  const user = getCurrentUser();
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
 function App() {
   return (
     <Router>
@@ -22,8 +31,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Dashboard Routes */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
+        {/* Dashboard Routes - Protected */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route index element={<DashboardHome />} />
           <Route path="live" element={<LiveMonitor />} />
           <Route path="logs" element={<Logs />} />

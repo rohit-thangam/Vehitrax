@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, User, Search, Menu, Moon, Sun, ShieldAlert, CheckCircle2, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { getCurrentUser } from '../utils/auth';
 import { useTheme } from '../context/ThemeContext';
@@ -166,7 +167,7 @@ const Navbar = ({ onMenuClick }) => {
                             >
                                 <div className="text-right hidden xl:block">
                                     <p className="text-sm font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{user?.name || 'Guest'}</p>
-                                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{user?.role || 'Visitor'}</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{user?.designation || user?.role || 'Visitor'}</p>
                                 </div>
                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-50 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center text-primary border border-white dark:border-slate-700 shadow-sm group-hover:shadow-[0_0_15px_rgba(124,58,237,0.2)] transition-all">
                                     <User className="w-5 h-5" />
@@ -186,24 +187,32 @@ const Navbar = ({ onMenuClick }) => {
                                             </div>
                                             <div>
                                                 <p className="text-sm font-bold text-slate-800 dark:text-white leading-tight">{user?.name}</p>
-                                                <p className="text-[10px] font-bold uppercase tracking-wider text-primary mt-1">{user?.role}</p>
+                                                <p className="text-[10px] font-bold uppercase tracking-wider text-primary mt-1">{user?.designation}</p>
                                             </div>
                                         </div>
                                         <div className="space-y-2 pt-2">
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-slate-500 font-medium">ID:</span>
-                                                <span className="text-slate-700 dark:text-slate-300 font-mono">EMP-8472</span>
+                                                <span className="text-slate-700 dark:text-slate-300 font-mono">{user?.id || 'N/A'}</span>
+                                            </div>
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-slate-500 font-medium">Dept:</span>
+                                                <span className="text-slate-700 dark:text-slate-300">{user?.department || 'N/A'}</span>
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-slate-500 font-medium">Email:</span>
-                                                <span className="text-slate-700 dark:text-slate-300">{user?.username || 'user'}@vehitrax.com</span>
+                                                <span className="text-slate-700 dark:text-slate-300">{user?.email || 'unknown@vehitrax.com'}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/50">
-                                        <button className="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-white dark:hover:bg-slate-800/80 rounded-xl transition-all flex items-center gap-2">
+                                        <Link 
+                                            to="/dashboard/settings"
+                                            onClick={() => setIsProfileOpen(false)}
+                                            className="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-white dark:hover:bg-slate-800/80 rounded-xl transition-all flex items-center gap-2"
+                                        >
                                             Account Settings
-                                        </button>
+                                        </Link>
                                     </div>
                                 </div>
                             )}
